@@ -84,3 +84,12 @@ function applyDayCount()
     -- Update the value in the skin
     SKIN:Bang("!SetOption", "DayCountTextMeter", "Text", formattedDayCount)
 end
+
+--- Called when the reset button is pressed on the skin.
+-- Resets the values for the started timestamp and date and notifies the skin to update
+function handleResetButton()
+    -- Update the values
+    setCurrentAsStarted()
+    -- Draw the updated values
+    SKIN:Bang("!Update")
+end
