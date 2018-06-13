@@ -1,6 +1,8 @@
 --- Rainmeter function which is run when the skin is activated or refreshed.
 -- Ensures that the started timestamp and date are set and sets them if this is not the case.
 function Initialize()
+    -- Global constant setup
+    SECONDS_PER_DAY = 60 * 60 * 24
     -- Get the comparison values from Rainmeter
     local startedTimestamp = SKIN:GetVariable("StartedTimestamp")
     local startedDate = SKIN:GetVariable("StartedDate")
@@ -16,12 +18,12 @@ function Initialize()
 end
 
 --- Rainmeter function which is run whenever script measure updates.
--- Updates the chain counter
+-- Updates the chain counter and the date
 function Update()
+    -- Update the chain counter text
+    applyDayCount()
     -- Update the date started text
-    local startedDate = SKIN:GetVariable("StartedDate")
-    local textDate = "(" .. startedDate .. ")"
-    SKIN:Bang("!SetOption", "DateStartedTextMeter", "Text", textDate)
+    applyDateStarted()
 end
 
 --- Updates the StartedTimestamp and StartedDate in both Rainmeter and the persisted files by setting them to the current values.
@@ -35,7 +37,7 @@ function setCurrentAsStarted()
     setStartedDate(startedDate)
 end
 
----Updates the StartedTimestamp in both Rainmeter and the persisted files.
+--- Updates the StartedTimestamp in both Rainmeter and the persisted files.
 -- @param startedTimestamp string: The seconds since the epoch representing the started time.
 function setStartedTimestamp(startedTimestamp)
     --[[
@@ -61,4 +63,24 @@ end
 -- @return string: A formatted date generated from the timestamp.
 function getFormattedDate(timestamp)
     return os.date("%B %d, %Y", timestamp)
+end
+
+--- Sets the value of the started date in the skin
+function applyDateStarted()
+    local startedDate = SKIN:GetVariable("StartedDate")
+    local textDate = "(" .. startedDate .. ")"
+    SKIN:Bang("!SetOption", "DateStartedTextMeter", "Text", textDate)
+end
+
+--- Determines the difference in days between the current time and the started timestamp then sets the value in the skin
+function applyDayCount()
+    -- Get the two timestamps
+    local startedTimestamp = SKIN:GetVariable("StartedTimestamp")
+    local currentTime = os.time()
+    -- Determine the difference in days
+    local timeDifference = os.difftime(currentTime, startedTimestamp)
+    local differenceInDays = math.floor(timeDifference/SECONDS_PER_DAY)
+    local formattedDayCount = tostring(differenceInDays) .. " " .. (differenceInDays == 1 and "Day" or "Days")
+    -- Update the value in the skin
+    SKIN:Bang("!SetOption", "DayCountTextMeter", "Text", formattedDayCount)
 end
