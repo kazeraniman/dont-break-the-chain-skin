@@ -40,9 +40,6 @@ end
 --- Updates the StartedTimestamp in both Rainmeter and the persisted files.
 -- @param startedTimestamp string: The seconds since the epoch representing the started time.
 function setStartedTimestamp(startedTimestamp)
-    --[[
-    Updates the StartedTimestamp in both Rainmeter and the persisted files.
-    ]]--
     -- Update the values in Rainmeter
     SKIN:Bang("!SetVariable", "StartedTimestamp", startedTimestamp)
     -- Update the values in the data file
