@@ -101,6 +101,9 @@ function enableMainMode()
     SKIN:Bang("!ShowMeterGroup", "MainMode")
     -- Resize the skin background accordingly
     SKIN:Bang("!SetOption", "Background", "H", 200)
+    -- Move the mode-specific elements to their appropriate positions
+    positionSetModeControls(false)
+    positionResetModeControls(false)
     -- Draw the updated results
     SKIN:Bang("!Update")
 end
@@ -113,6 +116,9 @@ function enableSetMode()
     SKIN:Bang("!ShowMeterGroup", "SetMode")
     -- Resize the skin background accordingly
     SKIN:Bang("!SetOption", "Background", "H", 320)
+    -- Move the mode-specific elements to their appropriate positions
+    positionSetModeControls(true)
+    positionResetModeControls(false)
     -- Draw the updated results
     SKIN:Bang("!Update")
 end
@@ -125,6 +131,55 @@ function enableResetMode()
     SKIN:Bang("!ShowMeterGroup", "ResetMode")
     -- Resize the skin background accordingly
     SKIN:Bang("!SetOption", "Background", "H", 277)
+    -- Move the mode-specific elements to their appropriate positions
+    positionResetModeControls(true)
+    positionSetModeControls(false)
     -- Draw the updated results
     SKIN:Bang("!Update")
+end
+
+--- Position the reset-specific controls depending on the mode in order to avoid over-large skin
+-- sizes relative to the visible controls.
+-- @param activePosition boolean: Whether or not the controls should be placed in their correct,
+-- mode is active positions.
+function positionResetModeControls(activePosition)
+    if activePosition then
+        SKIN:Bang("!SetOption", "ResetWarningTextMeter", "Y", 202);
+        SKIN:Bang("!SetOption", "ConfirmResetButtonMeter", "Y", 234);
+    else
+        SKIN:Bang("!SetOption", "ResetWarningTextMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "ConfirmResetButtonMeter", "Y", 0);
+    end
+end
+
+--- Position the set-specific controls depending on the mode in order to avoid over-large skin
+-- sizes relative to the visible controls.
+-- @param activePosition boolean: Whether or not the controls should be placed in their correct,
+-- mode is active positions.
+function positionSetModeControls(activePosition)
+    if activePosition then
+        SKIN:Bang("!SetOption", "SetDateBackgroundBlocksShapeMeter", "Y", 222);
+        SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Y", 223);
+        SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Y", 223);
+        SKIN:Bang("!SetOption", "SetDateYearTextMeter", "Y", 223);
+        SKIN:Bang("!SetOption", "SetDateMonthUpButtonMeter", "Y", 200);
+        SKIN:Bang("!SetOption", "SetDateDayUpButtonMeter", "Y", 200);
+        SKIN:Bang("!SetOption", "SetDateYearUpButtonMeter", "Y", 200);
+        SKIN:Bang("!SetOption", "SetDateMonthDownButtonMeter", "Y", 254);
+        SKIN:Bang("!SetOption", "SetDateDayDownButtonMeter", "Y", 254);
+        SKIN:Bang("!SetOption", "SetDateYearDownButtonMeter", "Y", 254);
+        SKIN:Bang("!SetOption", "ConfirmSetButtonMeter", "Y", 277);
+    else
+        SKIN:Bang("!SetOption", "SetDateBackgroundBlocksShapeMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "SetDateYearTextMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "SetDateMonthUpButtonMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "SetDateDayUpButtonMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "SetDateYearUpButtonMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "SetDateMonthDownButtonMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "SetDateDayDownButtonMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "SetDateYearDownButtonMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "ConfirmSetButtonMeter", "Y", 0);
+    end
 end
