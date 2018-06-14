@@ -3,6 +3,34 @@
 function Initialize()
     -- Global constant setup
     SECONDS_PER_DAY = 60 * 60 * 24
+    MONTHS = {
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    }
+    DAYS_PER_MONTH = {
+        January=31,
+        February=28,
+        March=31,
+        April=30,
+        May=31,
+        June=30,
+        July=31,
+        August=31,
+        September=30,
+        October=31,
+        November=30,
+        December=31
+    }
     -- Get the comparison values from Rainmeter
     local startedTimestamp = SKIN:GetVariable("StartedTimestamp")
     local startedDate = SKIN:GetVariable("StartedDate")
@@ -119,6 +147,15 @@ function enableSetMode()
     -- Move the mode-specific elements to their appropriate positions
     positionSetModeControls(true)
     positionResetModeControls(false)
+    -- Set the default set date as today
+    local now = os.date("*t")
+    setMonth = now.month
+    setDay = now.day
+    setYear = now.year
+    -- Update the text meters with today's date
+    SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Text", MONTHS[setMonth])
+    SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Text", setDay)
+    SKIN:Bang("!SetOption", "SetDateYearTextMeter", "Text", setYear)
     -- Draw the updated results
     SKIN:Bang("!Update")
 end
@@ -182,4 +219,104 @@ function positionSetModeControls(activePosition)
         SKIN:Bang("!SetOption", "SetDateYearDownButtonMeter", "Y", 0);
         SKIN:Bang("!SetOption", "ConfirmSetButtonMeter", "Y", 0);
     end
+end
+
+--- Move backward along the table of months, wrapping around if necessary.
+function handleSetDateMonthUpButton()
+    -- Move backward one month
+    setMonth = setMonth - 1
+    -- Wrap around if we were on January before
+    if setMonth == 0 then
+        setMonth = 12
+    end
+    -- Update the text
+    SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Text", MONTHS[setMonth])
+    -- Draw the updates
+    SKIN:Bang("!Update")
+end
+
+--- Move forward along the table of months, wrapping around if necessary.
+function handleSetDateMonthDownButton()
+    -- Move forward one month
+    setMonth = setMonth + 1
+    -- Wrap around if we were on December before
+    if setMonth == 13 then
+        setMonth = 1
+    end
+    -- Update the text
+    SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Text", MONTHS[setMonth])
+    -- Draw the updates
+    SKIN:Bang("!Update")
+end
+
+--- Move backward along the days of the month, wrapping around if necessary.
+function handleSetDateDayUpButton()
+    -- Move backward one day
+    setDay = setDay - 1
+    -- Wrap around if we were on the first before
+    if setDay == 0 then
+        setDay = DAYS_PER_MONTH[MONTHS[setMonth]]
+    end
+    -- Update the text
+    SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Text", setDay)
+    -- Draw the updates
+    SKIN:Bang("!Update")
+end
+
+--- Move forward along the days of the month, wrapping around if necessary.
+function handleSetDateDayDownButton()
+    -- Move forward one day
+    setDay = setDay + 1
+    -- Wrap around if we were on the last of the month before
+    if setDay == DAYS_PER_MONTH[MONTHS[setMonth]] + 1 then
+        setDay = 1
+    end
+    -- Update the text
+    SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Text", setDay)
+    -- Draw the updates
+    SKIN:Bang("!Update")
+end
+
+--- Move backward along the years, constrained to the first year.
+function handleSetDateYearUpButton()
+    -- Move backward one year
+    setYear = setYear - 1
+    -- Don't go further back than year 1
+    if setYear == 0 then
+        setYear = 1
+    end
+    -- Update the text
+    SKIN:Bang("!SetOption", "SetDateYearTextMeter", "Text", setYear)
+    -- Draw the updates
+    SKIN:Bang("!Update")
+end
+
+--- Move forward along the years, constrained to the current year.
+function handleSetDateYearDownButton()
+    -- Move forward one day
+    setYear = setYear + 1
+    -- Don't go past the current year
+    local currentYear = os.date("*t")["year"]
+    if setYear == currentYear + 1 then
+        setYear = currentYear
+    end
+    -- Update the text
+    SKIN:Bang("!SetOption", "SetDateYearTextMeter", "Text", setYear)
+    -- Draw the updates
+    SKIN:Bang("!Update")
+end
+
+--- Updates the StartedTimestamp and StartedDate in both Rainmeter and the persisted files by setting them to the selected values.
+function handleConfirmSetButton()
+    -- Create a timestamp for the selected date
+    local startedTimestamp = os.time{day=setDay, month=setMonth, year=setYear, hour=0, min=0, sec=0}
+    -- Get the human-readable date
+    local startedDate = getFormattedDate(startedTimestamp)
+    -- Update the values in Rainmeter and the persisted files
+    setStartedTimestamp(startedTimestamp)
+    setStartedDate(startedDate)
+    -- Go back to main mode
+    enableMainMode()
+    -- Update the skin
+    SKIN:Bang("!Update")
 end
