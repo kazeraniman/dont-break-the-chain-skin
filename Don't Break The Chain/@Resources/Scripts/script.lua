@@ -58,8 +58,9 @@ end
 
 --- Updates the StartedTimestamp and StartedDate in both Rainmeter and the persisted files by setting them to the current values.
 function setCurrentAsStarted()
-    -- Get the current timestamp
-    local startedTimestamp = os.time()
+    -- Get the current day timestamp
+    local now = os.date("*t")
+    local startedTimestamp = os.time{day=now.day, month=now.month, year=now.year, hour=0, min=0, sec=0}
     -- Get the human-readable date
     local startedDate = getFormattedDate(startedTimestamp)
     -- Update the values in Rainmeter and the persisted files
