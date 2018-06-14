@@ -230,6 +230,8 @@ function handleSetDateMonthUpButton()
     if setMonth == 0 then
         setMonth = 12
     end
+    -- Accomodate non-leap years
+    limitSetDateOnNonLeapYear()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Text", MONTHS[setMonth])
     -- Draw the updates
@@ -244,6 +246,8 @@ function handleSetDateMonthDownButton()
     if setMonth == 13 then
         setMonth = 1
     end
+    -- Accomodate non-leap years
+    limitSetDateOnNonLeapYear()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Text", MONTHS[setMonth])
     -- Draw the updates
@@ -255,8 +259,12 @@ function handleSetDateDayUpButton()
     -- Move backward one day
     setDay = setDay - 1
     -- Wrap around if we were on the first before
+    local extraDay = 0
+    if setMonth == 2 and isLeapYear(setYear) then
+        extraDay = 1
+    end
     if setDay == 0 then
-        setDay = DAYS_PER_MONTH[MONTHS[setMonth]]
+        setDay = DAYS_PER_MONTH[MONTHS[setMonth]] + extraDay
     end
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Text", setDay)
@@ -269,7 +277,11 @@ function handleSetDateDayDownButton()
     -- Move forward one day
     setDay = setDay + 1
     -- Wrap around if we were on the last of the month before
-    if setDay == DAYS_PER_MONTH[MONTHS[setMonth]] + 1 then
+    local extraDay = 0
+    if setMonth == 2 and isLeapYear(setYear) then
+        extraDay = 1
+    end
+    if setDay == DAYS_PER_MONTH[MONTHS[setMonth]] + extraDay + 1 then
         setDay = 1
     end
     -- Update the text
@@ -286,6 +298,8 @@ function handleSetDateYearUpButton()
     if setYear == 0 then
         setYear = 1
     end
+    -- Accomodate non-leap years
+    limitSetDateOnNonLeapYear()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateYearTextMeter", "Text", setYear)
     -- Draw the updates
@@ -301,6 +315,8 @@ function handleSetDateYearDownButton()
     if setYear == currentYear + 1 then
         setYear = currentYear
     end
+    -- Accomodate non-leap years
+    limitSetDateOnNonLeapYear()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateYearTextMeter", "Text", setYear)
     -- Draw the updates
@@ -320,4 +336,28 @@ function handleConfirmSetButton()
     enableMainMode()
     -- Update the skin
     SKIN:Bang("!Update")
+end
+
+--- Determines whether or not the provided year is a leap year.
+-- @param year number: The year to check.
+-- @return boolean: True if the year is a leap year, false otherwise.
+function isLeapYear(year)
+    if (year % 400 == 0) or ((year % 4 == 0) and (year % 100 ~= 0)) then
+        return true
+    else
+        return false
+    end
+end
+
+--- Changes the set day from the 29th to the 28th of February in the event that it is not a leap year.
+function limitSetDateOnNonLeapYear()
+    -- If the set day is the 29th of February of a non-leap year, drop the day to the 28th
+    if setDay == 29 and setMonth == 2 and not isLeapYear(setYear) then
+        -- Change the day
+        setDay = 28
+        -- Update the text
+        SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Text", setDay)
+        -- Draw the updates
+        SKIN:Bang("!Update")
+    end
 end
