@@ -84,33 +84,47 @@ function applyDayCount()
     SKIN:Bang("!SetOption", "DayCountTextMeter", "Text", formattedDayCount)
 end
 
---- Called when the reset button is pressed on the skin.
+--- Called when the reset action has been confirmed.
 -- Resets the values for the started timestamp and date and notifies the skin to update
-function handleResetButton()
+function handleConfirmResetButton()
     -- Update the values
     setCurrentAsStarted()
-    -- Draw the updated values
+    -- Go back to main mode
+    enableMainMode()
+end
+
+--- Enables main mode and disables other modes..
+function enableMainMode()
+    -- Show / hide the needed meter groups
+    SKIN:Bang("!HideMeterGroup", "SetMode")
+    SKIN:Bang("!HideMeterGroup", "ResetMode")
+    SKIN:Bang("!ShowMeterGroup", "MainMode")
+    -- Resize the skin background accordingly
+    SKIN:Bang("!SetOption", "Background", "H", 200)
+    -- Draw the updated results
     SKIN:Bang("!Update")
 end
 
 --- Enables set mode and disables other modes.
 function enableSetMode()
     -- Show / hide the needed meter groups
-    SKIN:Bang("!HideMeterGroup", "MainModeOnly")
-    SKIN:Bang("!ShowMeterGroup", "SetModeOnly")
+    SKIN:Bang("!HideMeterGroup", "MainMode")
+    SKIN:Bang("!HideMeterGroup", "ResetMode")
+    SKIN:Bang("!ShowMeterGroup", "SetMode")
     -- Resize the skin background accordingly
     SKIN:Bang("!SetOption", "Background", "H", 320)
     -- Draw the updated results
     SKIN:Bang("!Update")
 end
 
---- Enables main mode and disables other modes..
-function enableMainMode()
+--- Enables reset mode and disables other modes.
+function enableResetMode()
     -- Show / hide the needed meter groups
-    SKIN:Bang("!HideMeterGroup", "SetModeOnly")
-    SKIN:Bang("!ShowMeterGroup", "MainModeOnly")
+    SKIN:Bang("!HideMeterGroup", "MainMode")
+    SKIN:Bang("!HideMeterGroup", "SetMode")
+    SKIN:Bang("!ShowMeterGroup", "ResetMode")
     -- Resize the skin background accordingly
-    SKIN:Bang("!SetOption", "Background", "H", 200)
+    SKIN:Bang("!SetOption", "Background", "H", 277)
     -- Draw the updated results
     SKIN:Bang("!Update")
 end
