@@ -15,6 +15,8 @@ function Initialize()
         -- Set the date to the timestamp which we have
         setStartedDate(getFormattedDate(tonumber(startedTimestamp)))
     end
+    -- Start in main mode
+    enableMainMode()
 end
 
 --- Rainmeter function which is run whenever script measure updates.
@@ -88,5 +90,27 @@ function handleResetButton()
     -- Update the values
     setCurrentAsStarted()
     -- Draw the updated values
+    SKIN:Bang("!Update")
+end
+
+--- Enables set mode and disables other modes.
+function enableSetMode()
+    -- Show / hide the needed meter groups
+    SKIN:Bang("!HideMeterGroup", "MainModeOnly")
+    SKIN:Bang("!ShowMeterGroup", "SetModeOnly")
+    -- Resize the skin background accordingly
+    SKIN:Bang("!SetOption", "Background", "H", 320)
+    -- Draw the updated results
+    SKIN:Bang("!Update")
+end
+
+--- Enables main mode and disables other modes..
+function enableMainMode()
+    -- Show / hide the needed meter groups
+    SKIN:Bang("!HideMeterGroup", "SetModeOnly")
+    SKIN:Bang("!ShowMeterGroup", "MainModeOnly")
+    -- Resize the skin background accordingly
+    SKIN:Bang("!SetOption", "Background", "H", 200)
+    -- Draw the updated results
     SKIN:Bang("!Update")
 end
