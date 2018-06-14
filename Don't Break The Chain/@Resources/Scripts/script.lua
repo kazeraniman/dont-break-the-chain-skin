@@ -128,6 +128,8 @@ function enableMainMode()
     SKIN:Bang("!HideMeterGroup", "SetMode")
     SKIN:Bang("!HideMeterGroup", "ResetMode")
     SKIN:Bang("!ShowMeterGroup", "MainMode")
+    -- Hide the special warning meter which doesn't belong to a group
+    SKIN:Bang("!HideMeter", "FutureDateWarning")
     -- Resize the skin background accordingly
     SKIN:Bang("!SetOption", "Background", "H", 200)
     -- Move the mode-specific elements to their appropriate positions
@@ -167,6 +169,8 @@ function enableResetMode()
     SKIN:Bang("!HideMeterGroup", "MainMode")
     SKIN:Bang("!HideMeterGroup", "SetMode")
     SKIN:Bang("!ShowMeterGroup", "ResetMode")
+    -- Hide the special warning meter which doesn't belong to a group
+    SKIN:Bang("!HideMeter", "FutureDateWarning")
     -- Resize the skin background accordingly
     SKIN:Bang("!SetOption", "Background", "H", 277)
     -- Move the mode-specific elements to their appropriate positions
@@ -207,6 +211,7 @@ function positionSetModeControls(activePosition)
         SKIN:Bang("!SetOption", "SetDateDayDownButtonMeter", "Y", 254);
         SKIN:Bang("!SetOption", "SetDateYearDownButtonMeter", "Y", 254);
         SKIN:Bang("!SetOption", "ConfirmSetButtonMeter", "Y", 277);
+        SKIN:Bang("!SetOption", "FutureDateWarning", "Y", 285);
     else
         SKIN:Bang("!SetOption", "SetDateBackgroundBlocksShapeMeter", "Y", 0);
         SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Y", 0);
@@ -219,6 +224,7 @@ function positionSetModeControls(activePosition)
         SKIN:Bang("!SetOption", "SetDateDayDownButtonMeter", "Y", 0);
         SKIN:Bang("!SetOption", "SetDateYearDownButtonMeter", "Y", 0);
         SKIN:Bang("!SetOption", "ConfirmSetButtonMeter", "Y", 0);
+        SKIN:Bang("!SetOption", "FutureDateWarning", "Y", 0);
     end
 end
 
@@ -232,6 +238,8 @@ function handleSetDateMonthUpButton()
     end
     -- Accomodate non-leap years
     limitSetDateOnNonLeapYear()
+    -- Check if the requested started date is valid
+    isSetDateInFuture()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Text", MONTHS[setMonth])
     -- Draw the updates
@@ -248,6 +256,8 @@ function handleSetDateMonthDownButton()
     end
     -- Accomodate non-leap years
     limitSetDateOnNonLeapYear()
+    -- Check if the requested started date is valid
+    isSetDateInFuture()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateMonthTextMeter", "Text", MONTHS[setMonth])
     -- Draw the updates
@@ -266,6 +276,8 @@ function handleSetDateDayUpButton()
     if setDay == 0 then
         setDay = DAYS_PER_MONTH[MONTHS[setMonth]] + extraDay
     end
+    -- Check if the requested started date is valid
+    isSetDateInFuture()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Text", setDay)
     -- Draw the updates
@@ -284,6 +296,8 @@ function handleSetDateDayDownButton()
     if setDay == DAYS_PER_MONTH[MONTHS[setMonth]] + extraDay + 1 then
         setDay = 1
     end
+    -- Check if the requested started date is valid
+    isSetDateInFuture()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Text", setDay)
     -- Draw the updates
@@ -300,6 +314,8 @@ function handleSetDateYearUpButton()
     end
     -- Accomodate non-leap years
     limitSetDateOnNonLeapYear()
+    -- Check if the requested started date is valid
+    isSetDateInFuture()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateYearTextMeter", "Text", setYear)
     -- Draw the updates
@@ -317,6 +333,8 @@ function handleSetDateYearDownButton()
     end
     -- Accomodate non-leap years
     limitSetDateOnNonLeapYear()
+    -- Check if the requested started date is valid
+    isSetDateInFuture()
     -- Update the text
     SKIN:Bang("!SetOption", "SetDateYearTextMeter", "Text", setYear)
     -- Draw the updates
@@ -359,5 +377,24 @@ function limitSetDateOnNonLeapYear()
         SKIN:Bang("!SetOption", "SetDateDayTextMeter", "Text", setDay)
         -- Draw the updates
         SKIN:Bang("!Update")
+    end
+end
+
+--- Displays a warning if in set mode and the date is in the future, otherwise allowing the user to confirm
+-- the selected date.
+function isSetDateInFuture()
+    -- Get the current timestamp
+    local now = os.time()
+    -- Get the set date timestamp
+    local setDateTimestamp = os.time{day=setDay, month=setMonth, year=setYear, hour=0, min=0, sec=0}
+    -- Compare the timestamps
+    local isFuture = os.difftime(now, setDateTimestamp) < 0
+    -- Display the correct meter depending on whether the set date is valid
+    if not isFuture then
+        SKIN:Bang("!HideMeter", "FutureDateWarning")
+        SKIN:Bang("!ShowMeter", "ConfirmSetButtonMeter")
+    else
+        SKIN:Bang("!HideMeter", "ConfirmSetButtonMeter")
+        SKIN:Bang("!ShowMeter", "FutureDateWarning")
     end
 end
