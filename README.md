@@ -3,7 +3,7 @@
 ## Description
 "Don't Break the Chain" is a productivity tip which was devised (to my knowledge) by Jerry Seinfeld.  The essence of the tip is that chains of activity are rewarding in their own right and are harder to break when tracked.  By doing a given activity and working toward a goal every day, each day you add another day onto the chain.  As the chain builds, you don't want to break it so even if you aren't feeling motivated you will put more time into it in order to not break the chain, which in turn gets you closer to your goal.  Seeing the days piling up is also very satisfying and a good motivator on its own, separate from the end goal.  You may read more about the methodology [here](https://www.writersstore.com/dont-break-the-chain-jerry-seinfeld/) and [here](https://lifehacker.com/281626/jerry-seinfelds-productivity-secret).
 
-This rainmeter skin helps to keep track of chains, whether to maintain a productivity streak or to help with quitting an addiction.  While crossing off days on a calendar is extremely satisfying, a more concise visualization is presented here.
+This Rainmeter skin helps to keep track of chains, whether to maintain a productivity streak or to help with quitting an addiction.  While crossing off days on a calendar is extremely satisfying, a more concise visualization is presented here.
 
 ## Installation
 
@@ -11,7 +11,7 @@ The automatic installation instructions on the Rainmeter website (found [here](h
 
 ## The Skin
 <p align="center">
-    <img src="Screenshots/main_mode.png" width=300 height=201 alt="The main screen for the skin.">
+    <img src="Screenshots/main_mode.png" width=300 height=200 alt="The main screen for the skin.">
 </p>
 
 In the default mode, a counter of the days in the chain is presented along with the date the chain was started as a reminder.  When the skin is launched for the first time, the chain is set to start on midnight of the current day.  To set the started date to another time, you simply press the start button to move to set mode.
